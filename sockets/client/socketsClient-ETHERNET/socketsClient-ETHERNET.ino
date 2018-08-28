@@ -24,7 +24,7 @@ long lastReadingTime = 0;
 
 
 const uint16_t port = 5000;
-const char * host = "192.168.1.40";
+const char * host = "192.168.1.238";
 
 
 
