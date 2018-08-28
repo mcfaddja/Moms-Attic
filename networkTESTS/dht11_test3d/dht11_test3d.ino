@@ -11,6 +11,7 @@
 #include <dht.h>
 #include <Ethernet.h>
 #include <EthernetUdp.h>
+#include <math.h>
 
 dht DHT;
 
@@ -105,7 +106,7 @@ void loop()
     unsigned long epoch = secsSince1900 - seventyYears;
 
     theYear = compYear(secsSince1900);
-    dayOfTheYear = compDayOfTheYear(theYear, secsSince1900
+//    dayOfTheYear = compDayOfTheYear(theYear, secsSince1900
 
     // check for a reading no more than once a second.
     if (millis() - lastReadingTime > 5001) {
@@ -286,41 +287,40 @@ void compDate(unsigned int secsSince1900) {
 
   boolean keepGoing = true;
   unsigned long tmpYear = 1900;
+  long testSecs = 0;
   while (keepGoing) {
     unsigned int numDays = 365;
 
-    if (tmpYear % 4 == 0) {
-      unsigned int leapYearTest1 = tmpYear % 100;
-      unsigned int leapYearTest2 = tmpYear % 400;
-
-      if (leapYearTest1 == 0 && leapYearTest2 == 0) {
-        numDays = 366;
-      }
-    }
+    if(checkLeapYear(tmpYear)) numDays = 366;
 
     tmpSecs = tmpSecs - numDays * daySecs;
     tmpYear++;
 
-    if (tmpYear % 4 == 0) {
-      unsigned int leapYearTest1 = tmpYear % 100;
-      unsigned int leapYearTest2 = tmpYear % 400;
+    numDays = 365;
+    if(checkLeapYear(tmpYear)) numDays = 366;
 
-      if (leapYearTest1 == 0 && leapYearTest2 == 0) {
-        numDays = 366;
-      } else {
-        numDays = 365;
-      }
-    } else {
-      numDays = 365;
-    }
-
-    long testSecs = tmpSecs - numDays * daySecs;
+    testSecs = tmpSecs - numDays * daySecs;
     if(testSecs <= 0) {
       keepGoing = false;
     }
-  }
+  } // END while loop
 
+  theYear = tmpYear;
+
+  double tmpDayOfYear = (double)tmpSecs / (double)daySecs;
+  dayOfTheYear = floor(tmpDayOfYear) + 1L; 
+
+  theMonth = compMonth(theYear, dayOfTheYear);
   
+  theDay = compDay(theYear, theMonth, dayOfTheYear);
+
+  double tmpHour = ((double)(secsSince1900 % daySecs)) / 3600.0;
+  theHour = floor(tmpHour);
+
+  double tmpMinute = ((double)(secsSince1900 % 3600)) / 60.0;
+  theMinute = floor(tmpMinute);
+
+  theSecond = secsSince1900 % 60;
 }
 
 
@@ -337,5 +337,163 @@ boolean checkLeapYear(unsigned long yearIn) {
     }
 
     return theAnswer;
+}
+
+unsigned long compMonth(unsigned long yearIn, unsigned long dayOfTheYearIn) {
+  unsigned long tmpMonth = 0;
+  if(checkLeapYear(yearIn)) {
+    tmpMonth = compYleapYrMonth(dayOfTheYearIn);
+  } else {
+    tmpMonth = compNleapYrMonth(dayOfTheYearIn);
+  }
+
+  return tmpMonth;
+}
+
+unsigned long compYleapYrMonth(unsigned long dayOfTheYearIn) {
+  unsigned long tmpMonth = 0;
+  
+  switch(dayOfTheYearIn) {
+    case 1 ... 31:
+      tmpMonth = 1;
+    case 32 ... 60:
+      tmpMonth = 2;
+    case 61 ... 91:
+      tmpMonth = 3;
+    case 92 ... 121:
+      tmpMonth = 4;
+    case 122 ... 152:
+      tmpMonth = 5;
+    case 153 ... 182:
+      tmpMonth = 6;
+    case 183 ... 213:
+      tmpMonth = 7;
+    case 214 ... 244:
+      tmpMonth = 8;
+    case 245 ... 274:
+      tmpMonth = 9;
+    case 275 ... 305:
+      tmpMonth = 10;
+    case 306 ... 335:
+      tmpMonth = 11;
+    case 336 ... 366:
+      tmpMonth = 12;
+  }
+
+  return tmpMonth;
+}
+
+unsigned long compNleapYrMonth(unsigned long dayOfTheYearIn) {
+  unsigned long tmpMonth = 0;
+  
+  switch(dayOfTheYearIn) {
+    case 1 ... 31:
+      tmpMonth = 1;
+    case 32 ... 59:
+      tmpMonth = 2;
+    case 60 ... 90:
+      tmpMonth = 3;
+    case 91 ... 120:
+      tmpMonth = 4;
+    case 121 ... 151:
+      tmpMonth = 5;
+    case 152 ... 181:
+      tmpMonth = 6;
+    case 182 ... 212:
+      tmpMonth = 7;
+    case 213 ... 243:
+      tmpMonth = 8;
+    case 244 ... 273:
+      tmpMonth = 9;
+    case 274 ... 304:
+      tmpMonth = 10;
+    case 305 ... 334:
+      tmpMonth = 11;
+    case 335 ... 365:
+      tmpMonth = 12;
+  }
+
+  return tmpMonth;
+}
+
+unsigned long compDay(unsigned long yearIn, unsigned long monthIn, unsigned long dayOfTheYearIn) {
+  unsigned long tmpDay = 0;
+
+  unsigned long aTMP = 0;
+  if(checkLeapYear(yearIn)) {
+    aTMP = compMonthDaysYleapYear(monthIn);
+  } else {
+    aTMP = compMonthDaysNleapYear(monthIn);
+  }
+
+  tmpDay = dayOfTheYearIn - aTMP;
+  
+  return tmpDay;
+}
+
+unsigned long compMonthDaysYleapYear(unsigned long monthIn) {
+  unsigned long tmpDaysToMonth = 0;
+
+  switch(monthIn){
+    case 1:
+      tmpDaysToMonth = 0;
+    case 2:
+      tmpDaysToMonth = 31;
+    case 3:
+      tmpDaysToMonth = 60;
+    case 4:
+      tmpDaysToMonth = 91;
+    case 5:
+      tmpDaysToMonth = 121;
+    case 6:
+      tmpDaysToMonth = 152;
+    case 7:
+      tmpDaysToMonth = 182;
+    case 8:
+      tmpDaysToMonth = 213;
+    case 9:
+      tmpDaysToMonth = 244;
+    case 10:
+      tmpDaysToMonth = 274;
+    case 11:
+      tmpDaysToMonth = 305;
+    case 12:
+      tmpDaysToMonth = 335;
+  }
+
+  return tmpDaysToMonth;
+}
+
+unsigned long compMonthDaysNleapYear(unsigned long monthIn) {
+  unsigned long tmpDaysToMonth = 0;
+
+  switch(monthIn){
+    case 1:
+      tmpDaysToMonth = 0;
+    case 2:
+      tmpDaysToMonth = 31;
+    case 3:
+      tmpDaysToMonth = 59;
+    case 4:
+      tmpDaysToMonth = 90;
+    case 5:
+      tmpDaysToMonth = 120;
+    case 6:
+      tmpDaysToMonth = 151;
+    case 7:
+      tmpDaysToMonth = 181;
+    case 8:
+      tmpDaysToMonth = 212;
+    case 9:
+      tmpDaysToMonth = 243;
+    case 10:
+      tmpDaysToMonth = 273;
+    case 11:
+      tmpDaysToMonth = 304;
+    case 12:
+      tmpDaysToMonth = 334;
+  }
+
+  return tmpDaysToMonth;
 }
 
