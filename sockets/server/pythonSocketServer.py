@@ -30,66 +30,66 @@ class MySensorDataHandler(socketserver.StreamRequestHandler):
 
         tblName = data[0]
         print(tblName)
-        # TABLES = {}
-        # TABLES[tblName] = (
-        #     "CREATE TABLE `{}` ("
-        #     "   `measurementID` BIGINT(100) NOT NULL AUTO_INCREMENT,"
-        #     "   `date` TIMESTAMP(2) NOT NULL,"
-        #     "   `relative_humidity` DOUBLE NOT NULL,"
-        #     "   `temperatureC` DOUBLE NOT NULL,"
-        #     "   `temperatureF` DOUBLE NOT NULL,"
-        #     "   PRIMARY KEY (`measurementID`),"
-        #     "   UNIQUE INDEX `measurementID_UNIQUE` (`measurementID` ASC) VISIBLE"
-        #     ") ENGINE=InnoDB".format(tblName)
-        # )
+        TABLES = {}
+        TABLES[tblName] = (
+            "CREATE TABLE `{}` ("
+            "   `measurementID` BIGINT(100) NOT NULL AUTO_INCREMENT,"
+            "   `date` TIMESTAMP(2) NOT NULL,"
+            "   `relative_humidity` DOUBLE NOT NULL,"
+            "   `temperatureC` DOUBLE NOT NULL,"
+            "   `temperatureF` DOUBLE NOT NULL,"
+            "   PRIMARY KEY (`measurementID`),"
+            "   UNIQUE INDEX (`measurementID`)"
+            ") ENGINE=InnoDB".format(tblName)
+        )
 
 
-        # cursor = cnx.cursor()
-        # try:
-        #     print("Creating table {}: ".format(tblName), end='')
-        #     cursor.execute(TABLES[tblName])
-        # except mysql.connector.Error as err:
-        #     if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-        #         print("already exists")
-        #     else:
-        #         print(err.msg)
-        # else:
-        #     print("OK!")
+        cursor = cnx.cursor()
+        try:
+            print("Creating table {}: ".format(tblName), end='')
+            cursor.execute(TABLES[tblName])
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+                print("already exists")
+            else:
+                print(err.msg)
+        else:
+            print("OK!")
 
         
-        # add_datapt = ("INSERT INTO `{}` "
-        #               "(date, relative_humidity, temeratureC, temperatureF) "
-        #               "VALUES (%(date_time_pt)s, %(relH)s, %(tC)s, %(tF)s)".format(tblName))
+        add_datapt = ("INSERT INTO `{}` "
+                      "(date, relative_humidity, temperatureC, temperatureF) "
+                      "VALUES (%(date_time_pt)s, %(relH)s, %(tC)s, %(tF)s)".format(tblName))
 
-        # aDataPT = {
-        #     'date_time_pt': myTime,
-        #     'relH': data[1],
-        #     'tC': data[2],
-        #     'tF': data[3],
-        # }
+        aDataPT = {
+            'date_time_pt': myTime,
+            'relH': data[1],
+            'tC': data[2],
+            'tF': data[3],
+        }
 
-        # cursor.execute(add_datapt, aDataPT)
-        # cnx.commit()
+        cursor.execute(add_datapt, aDataPT)
+        cnx.commit()
 
-        # add_datapt2 = ("INSERT INTO `allTestSensors` "
-        #                "(date, relativeHumidity, temperatureF, temperatureC, sensorID) "
-        #                "VALUES (%(dateINFO)s, %(relH)s, %(tF)s, %(tC)s, %(senID)s)")
+        add_datapt2 = ("INSERT INTO `allTestSensors` "
+                       "(date, relativeHumidity, temperatureF, temperatureC, sensorID) "
+                       "VALUES (%(dateINFO)s, %(relH)s, %(tF)s, %(tC)s, %(senID)s)")
         
-        # aDataPT2 = {
-        #     'dateINFO': myTime,
-        #     'relH': data[1],
-        #     'tF': data[3],
-        #     'tC': data[2],
-        #     'senID': data[0],
-        # }
+        aDataPT2 = {
+            'dateINFO': myTime,
+            'relH': data[1],
+            'tF': data[3],
+            'tC': data[2],
+            'senID': data[0],
+        }
 
-        # cursor.execute(add_datapt2, aDataPT2)
-        # cnx.commit()
+        cursor.execute(add_datapt2, aDataPT2)
+        cnx.commit()
 
         print(data)
 
-        # cursor.close()
-        # cnx.close()
+        cursor.close()
+        cnx.close()
 
 
 
