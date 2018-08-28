@@ -147,7 +147,7 @@ void listenForEthernetClients() {
           client.println("\t The IP Address of this sensor device is: ");
           client.println("<br />");
           //          client.println("192.168.1.250");
-          client.println(String(host));
+          client.println(ip);
           client.println("<br />");
           client.println(" ");
           client.println("<br />");
