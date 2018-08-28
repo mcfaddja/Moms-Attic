@@ -64,7 +64,7 @@ void loop()
   switch (chk)
   {
     case DHTLIB_OK:  
-		Serial.print("OK,\t"); 
+		Serial.println("OK,\t"); 
 		break;
     case DHTLIB_ERROR_CHECKSUM: 
 		Serial.print("Checksum error,\t"); 
@@ -106,6 +106,18 @@ void listenForEthernetClients() {
           client.println("Content-Type: text/html");
           client.println();
           // print the current readings, in HTML format:
+          client.println("This is the first test remote sensor");
+          client.println("<br />");
+          client.println("\t This remote device is connected via ETHERNET");
+          client.println("<br />");
+          client.println("\t The IP Address of this sensor device is 192.168.1.250");
+          client.println("<br />");
+          client.println("\t The MAC Address of this sensor device is DE:AD:BE:EF:FE:ED");
+          client.println("<br />");
+          client.println(" ");
+          client.println("<br />");
+          client.println(" ");
+          client.println("<br />");
           client.print("Temperature (F): ");
           client.print(tempF);
           client.print(" degrees F");
