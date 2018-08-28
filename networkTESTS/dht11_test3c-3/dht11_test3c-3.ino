@@ -129,7 +129,7 @@ void listenForEthernetClients() {
           client.println("<br />");
           client.println("\t The MAC Address of this sensor device is: ");
           client.println("<br />");
-          client.println("DE:AD:BE:EF:FE:ED");
+          client.println("ne  DE:AD:BE:EF:FE:ED");
           client.println("<br />");
           client.println(" ");
           client.println("<br />");
