@@ -13,7 +13,7 @@ IPAddress ip(192, 168, 1, 251);
 EthernetServer server(80);
 
 
-const char sensorName = "testEthernet1";
+const char sensorName = "testEthernet2";
 
 
 double tempC = 0;
