@@ -168,6 +168,13 @@ void listenForEthernetClients() {
           client.println("<br />");
           client.println(" ");
           client.println("<br />");
+          client.println("\t Data is sent to the server at the IP Address: ");
+          client.println("<br />");
+          //          client.println("192.168.1.250");
+          client.println(host);
+          client.println("<br />");
+          client.println(" ");
+          client.println("<br />");
           client.println(" ");
           client.println("<br />");
           client.print("Temperature (F): ");
