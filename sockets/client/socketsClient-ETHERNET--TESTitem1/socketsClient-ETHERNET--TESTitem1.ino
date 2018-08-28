@@ -10,7 +10,9 @@ byte mac[] = {
 };
 IPAddress ip(192, 168, 1, 250);
 
-EthernetServer server(80);
+//EthernetServer server(80);
+
+//EthernetClient client;
 
 
 const char sensorName = "testEthernet1";
@@ -50,7 +52,7 @@ void setup() {
   }
 
   // start listening for clients
-  server.begin();
+  //  server.begin();
 
   delay(1000);
 }
@@ -83,16 +85,15 @@ void loop() {
     tempF = tempC * 9.0 / 5.0 + 32.0;
     relH = DHT.humidity;
 
+    Serial.println(tempC);
+    Serial.println(tempF);
+    Serial.println(relH);
 
+
+
+    //    doNetworkStuff();
   }
 
-  doNetworkStuff();
-
-  delay(99);
-}
-
-
-void doNetworkStuff() {
   int theBuffSize = 640;
   int theMiniBuffSize = 64;
   char buff[theBuffSize];
@@ -103,7 +104,7 @@ void doNetworkStuff() {
 
   snprintf(miniBuff, sizeof(miniBuff), "%s\r\n", sensorName);
   strcat(buff, miniBuff);
-  
+
   snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", relH);
   strcat(buff, miniBuff);
 
@@ -121,14 +122,76 @@ void doNetworkStuff() {
     delay(2500);
     return;
   }
-  
+
   Serial.print("connected to");
   Serial.println(client.remoteIP());
 
-  client.println(buff);
-  Serial.println("data sent, closing connection...");
+//  if (client.connect(host, port)) {
+    client.println(buff);
+    Serial.println("data sent, closing connection...");
+//  }
 
   client.stop();
   Serial.println("connection closed!!!");
+
+  //  int len = client.available();
+
+  //  if (len > 0) {
+  //    client.write(buff, theBuffSize);
+  //    Serial.println("data sent, closing connection...");
+  //
+  //    client.stop();
+  //    Serial.println("connection closed!!!");
+  //  }
+
+
+  delay(99);
+}
+
+
+void doNetworkStuff() {
+  int theBuffSize = 640;
+  int theMiniBuffSize = 64;
+  char buff[theBuffSize];
+  char miniBuff[theMiniBuffSize];
+
+  memset(buff, '\0', sizeof(buff));
+  memset(miniBuff, '\0', sizeof(miniBuff));
+
+  snprintf(miniBuff, sizeof(miniBuff), "%s\r\n", sensorName);
+  strcat(buff, miniBuff);
+
+  snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", relH);
+  strcat(buff, miniBuff);
+
+  snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", tempC);
+  strcat(buff, miniBuff);
+
+  snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", tempF);
+  strcat(buff, miniBuff);
+
+
+  EthernetClient client;
+
+  if (!client.connect(host, port)) {
+    Serial.println("connection failed");
+    Serial.println("wait 5 sec...");
+    delay(2500);
+    return;
+  }
+
+  Serial.print("connected to");
+  Serial.println(client.remoteIP());
+
+//  int len = client.available();
+//
+//  if (len > 0) {
+//    client.write(buff, theBuffSize);
+//    Serial.println("data sent, closing connection...");
+//
+//    client.stop();
+//    Serial.println("connection closed!!!");
+//  }
+
 }
 

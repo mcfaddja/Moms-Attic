@@ -29,6 +29,7 @@ class MySensorDataHandler(socketserver.StreamRequestHandler):
             data.append(tmpROW)
 
         tblName = data[0]
+        print(tblName)
         TABLES = {}
         TABLES[tblName] = (
             "CREATE TABLE `{}` ("
