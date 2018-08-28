@@ -74,14 +74,14 @@ void setup() {
 }
 
 void loop() {
-  struct temp_datapoint theData;
-  theData.sensorName = theSensorName;
-  
-  char buff[320];
-  char miniBuff1[64];
-  char miniBuff2[64];
-  char miniBuff3[64];
-  char miniBuff4[64];
+  //  struct temp_datapoint theData;
+  //  theData.sensorName = theSensorName;
+
+  char buff[80];
+  char miniBuff1[32];
+  char miniBuff2[6];
+  char miniBuff3[6];
+  char miniBuff4[6];
   //  float tempC = 0.0;
   //  float tempF = 0.0;
   //  float relH = 0.0;
@@ -123,36 +123,55 @@ void loop() {
       break;
   }
 
-  theData.tempC = DHT.temperature;
-  theData.tempF = (theData.tempC * 9.0f / 5.0f + 32.0f);
-  theData.relH = DHT.humidity;
+  //  theData.tempC = DHT.temperature;
+  //  theData.tempF = (theData.tempC * 9.0f / 5.0f + 32.0f);
+  //  theData.relH = DHT.humidity;
+//  double tempC = DHT.temperature;
+//  double tempF = (tempC * 9.0f / 5.0f + 32.0f);
+//  double relH = DHT.humidity;
 
-  unsigned int aTempC = round(theData.tempC);
-  unsigned int aTempF = round(theData.tempF);
-  unsigned int aRelH = round(theData.relH);
+  //  unsigned int aTempC = round(theData.tempC);
+  //  unsigned int aTempF = round(theData.tempF);
+  //  unsigned int aRelH = round(theData.relH);
+//  unsigned int aTempC = round(tempC);
+//  unsigned int aTempF = round(tempF);
+//  unsigned int aRelH = round(relH);
 
-  Serial.println(theData.tempC);
-  Serial.println(theData.tempF);
-  Serial.println(theData.relH);
+  //  Serial.println(theData.tempC);
+  //  Serial.println(theData.tempF);
+  //  Serial.println(theData.relH);
+//  Serial.println(tempC);
+//  Serial.println(tempF);
+//  Serial.println(relH);
+
+  double myRelH = DHT.humidity;
+  double myTempC = DHT.temperature;
+  double myTempF = ((DHT.temperature*(9.0/5.0))+32);
+
+  Serial.println(myRelH);
+  Serial.println(myTempC);
+  Serial.println(myTempF);
 
 
 
-
-  snprintf(miniBuff1, sizeof(miniBuff1), "%s\r\n", theSensorName);
+    snprintf(miniBuff1, sizeof(miniBuff1), "%s\r\n", theSensorName);
   strcat(buff, miniBuff1);
 
-  snprintf(miniBuff2, sizeof(miniBuff2), "%u\r\n", aRelH);
-//  snprintf(miniBuff2, sizeof(miniBuff2), "%G\r\n", theData.relH);
+//  snprintf(miniBuff2, sizeof(miniBuff2), "%u\r\n", aRelH);
+  //  snprintf(miniBuff2, sizeof(miniBuff2), "%G\r\n", theData.relH);
+  snprintf(miniBuff2, sizeof(miniBuff2), " %4.2f", myRelH);
   //  snprintf(miniBuff2, sizeof(miniBuff2), "%f\n", DHT.humidity);
   strcat(buff, miniBuff2);
 
-  snprintf(miniBuff3, sizeof(miniBuff3), "%u\r\n", aTempC);
-//  snprintf(miniBuff3, sizeof(miniBuff3), "%G\r\n", theData.tempC);
+//  snprintf(miniBuff3, sizeof(miniBuff3), "%u\r\n", aTempC);
+  //  snprintf(miniBuff3, sizeof(miniBuff3), "%G\r\n", theData.tempC);
+  snprintf(miniBuff3, sizeof(miniBuff3), " %4.2f", myTempC);
   //  snprintf(miniBuff3, sizeof(miniBuff3), "%f\n", DHT.temperature);
   strcat(buff, miniBuff3);
-  
-  snprintf(miniBuff4, sizeof(miniBuff4), "%u\r\n", aTempF);
-//  snprintf(miniBuff4, sizeof(miniBuff4), "%G\r\n", theData.tempF);
+
+//  snprintf(miniBuff4, sizeof(miniBuff4), "%u\r\n", aTempF);
+  //  snprintf(miniBuff4, sizeof(miniBuff4), "%G\r\n", theData.tempF);
+  snprintf(miniBuff4, sizeof(miniBuff4), " %4.2f", myTempF);
   //  snprintf(miniBuff4, sizeof(miniBuff4), "%f\n", (DHT.temperature * 9.0 / 5.0 + 32));
   strcat(buff, miniBuff4);
 
@@ -176,7 +195,11 @@ void loop() {
   Serial.println(client.remoteIP());
 
   //  if (client.connect(host, port)) {
-  client.println(buff);
+//  client.println(buff);
+  client.println(theSensorName);
+  client.println(myRelH);
+  client.println(myTempC);
+  client.println(myTempF);
   Serial.println("data sent, closing connection...");
   //  }
 
