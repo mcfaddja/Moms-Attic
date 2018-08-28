@@ -53,6 +53,9 @@ unsigned long theSecond = 0L;
 
 unsigned long adjUTC = 8L;
 
+char dateStrUTC[27];
+char dateStr[27];
+
 
 void setup()
 {
@@ -105,8 +108,10 @@ void loop()
     // subtract seventy years:
     unsigned long epoch = secsSince1900 - seventyYears;
 
-    theYear = compYear(secsSince1900);
-//    dayOfTheYear = compDayOfTheYear(theYear, secsSince1900
+    compDate(secsSince1900);
+
+    //    theYear = compYear(secsSince1900);
+    //    dayOfTheYear = compDayOfTheYear(theYear, secsSince1900
 
     // check for a reading no more than once a second.
     if (millis() - lastReadingTime > 5001) {
@@ -191,6 +196,16 @@ void listenForEthernetClients() {
           client.println("<br />");
           client.println(" ");
           client.println("<br />");
+          makeDateStringUTC();
+          makeDateString8utc();
+          client.println("The Date is: ");
+          client.println(dateStrUTC);
+          client.println(" UTC time");
+          client.println("<br />");
+          client.println(" \t \t ");
+          client.println(dateStr);
+          client.println(" Pacific Coast time");
+          client.println("<br />");
           client.println("Time until next measurement: ");
           client.println((5000 - (millis() - lastReadingTime)));
           client.println(" milliseconds");
@@ -272,7 +287,7 @@ unsigned long compYear(unsigned long secsSince1900) {
     }
 
     long testSecs = tmpSecs - numDays * daySecs;
-    if(testSecs <= 0) {
+    if (testSecs <= 0) {
       keepGoing = false;
     }
   }
@@ -291,16 +306,16 @@ void compDate(unsigned int secsSince1900) {
   while (keepGoing) {
     unsigned int numDays = 365;
 
-    if(checkLeapYear(tmpYear)) numDays = 366;
+    if (checkLeapYear(tmpYear)) numDays = 366;
 
     tmpSecs = tmpSecs - numDays * daySecs;
     tmpYear++;
 
     numDays = 365;
-    if(checkLeapYear(tmpYear)) numDays = 366;
+    if (checkLeapYear(tmpYear)) numDays = 366;
 
     testSecs = tmpSecs - numDays * daySecs;
-    if(testSecs <= 0) {
+    if (testSecs <= 0) {
       keepGoing = false;
     }
   } // END while loop
@@ -308,10 +323,10 @@ void compDate(unsigned int secsSince1900) {
   theYear = tmpYear;
 
   double tmpDayOfYear = (double)tmpSecs / (double)daySecs;
-  dayOfTheYear = floor(tmpDayOfYear) + 1L; 
+  dayOfTheYear = floor(tmpDayOfYear) + 1L;
 
   theMonth = compMonth(theYear, dayOfTheYear);
-  
+
   theDay = compDay(theYear, theMonth, dayOfTheYear);
 
   double tmpHour = ((double)(secsSince1900 % daySecs)) / 3600.0;
@@ -328,20 +343,20 @@ boolean checkLeapYear(unsigned long yearIn) {
   boolean theAnswer = false;
 
   if (yearIn % 4 == 0) {
-      unsigned int leapYearTest1 = yearIn % 100;
-      unsigned int leapYearTest2 = yearIn % 400;
+    unsigned int leapYearTest1 = yearIn % 100;
+    unsigned int leapYearTest2 = yearIn % 400;
 
-      if (leapYearTest1 == 0 && leapYearTest2 == 0) {
-        theAnswer = true;
-      }
+    if (leapYearTest1 == 0 && leapYearTest2 == 0) {
+      theAnswer = true;
     }
+  }
 
-    return theAnswer;
+  return theAnswer;
 }
 
 unsigned long compMonth(unsigned long yearIn, unsigned long dayOfTheYearIn) {
   unsigned long tmpMonth = 0;
-  if(checkLeapYear(yearIn)) {
+  if (checkLeapYear(yearIn)) {
     tmpMonth = compYleapYrMonth(dayOfTheYearIn);
   } else {
     tmpMonth = compNleapYrMonth(dayOfTheYearIn);
@@ -352,8 +367,8 @@ unsigned long compMonth(unsigned long yearIn, unsigned long dayOfTheYearIn) {
 
 unsigned long compYleapYrMonth(unsigned long dayOfTheYearIn) {
   unsigned long tmpMonth = 0;
-  
-  switch(dayOfTheYearIn) {
+
+  switch (dayOfTheYearIn) {
     case 1 ... 31:
       tmpMonth = 1;
     case 32 ... 60:
@@ -385,8 +400,8 @@ unsigned long compYleapYrMonth(unsigned long dayOfTheYearIn) {
 
 unsigned long compNleapYrMonth(unsigned long dayOfTheYearIn) {
   unsigned long tmpMonth = 0;
-  
-  switch(dayOfTheYearIn) {
+
+  switch (dayOfTheYearIn) {
     case 1 ... 31:
       tmpMonth = 1;
     case 32 ... 59:
@@ -420,21 +435,21 @@ unsigned long compDay(unsigned long yearIn, unsigned long monthIn, unsigned long
   unsigned long tmpDay = 0;
 
   unsigned long aTMP = 0;
-  if(checkLeapYear(yearIn)) {
+  if (checkLeapYear(yearIn)) {
     aTMP = compMonthDaysYleapYear(monthIn);
   } else {
     aTMP = compMonthDaysNleapYear(monthIn);
   }
 
   tmpDay = dayOfTheYearIn - aTMP;
-  
+
   return tmpDay;
 }
 
 unsigned long compMonthDaysYleapYear(unsigned long monthIn) {
   unsigned long tmpDaysToMonth = 0;
 
-  switch(monthIn){
+  switch (monthIn) {
     case 1:
       tmpDaysToMonth = 0;
     case 2:
@@ -467,7 +482,7 @@ unsigned long compMonthDaysYleapYear(unsigned long monthIn) {
 unsigned long compMonthDaysNleapYear(unsigned long monthIn) {
   unsigned long tmpDaysToMonth = 0;
 
-  switch(monthIn){
+  switch (monthIn) {
     case 1:
       tmpDaysToMonth = 0;
     case 2:
@@ -497,3 +512,125 @@ unsigned long compMonthDaysNleapYear(unsigned long monthIn) {
   return tmpDaysToMonth;
 }
 
+void makeDateStringUTC() {
+  memset(dateStrUTC, '\0', sizeof(dateStrUTC));
+
+  char monthName[9];
+  memset(monthName, '\0', sizeof(monthName));
+  switch (theMonth) {
+    case 1:
+      snprintf(monthName, sizeof(monthName), "%s", "January");
+    case 2:
+      snprintf(monthName, sizeof(monthName), "%s", "February");
+    case 3:
+      snprintf(monthName, sizeof(monthName), "%s", "March");
+    case 4:
+      snprintf(monthName, sizeof(monthName), "%s", "April");
+    case 5:
+      snprintf(monthName, sizeof(monthName), "%s", "May");
+    case 6:
+      snprintf(monthName, sizeof(monthName), "%s", "June");
+    case 7:
+      snprintf(monthName, sizeof(monthName), "%s", "July");
+    case 8:
+      snprintf(monthName, sizeof(monthName), "%s", "August");
+    case 9:
+      snprintf(monthName, sizeof(monthName), "%s", "September");
+    case 10:
+      snprintf(monthName, sizeof(monthName), "%s", "October");
+    case 11:
+      snprintf(monthName, sizeof(monthName), "%s", "November");
+    case 12:
+      snprintf(monthName, sizeof(monthName), "%s", "December");
+  }
+
+  char hourStr[2];
+  memset(hourStr, '\0', sizeof(hourStr));
+  if(theHour < 10) {
+    snprintf(hourStr, sizeof(hourStr), "0%d", theHour);
+  } else {
+    snprintf(hourStr, sizeof(hourStr), "%d", theHour);
+  }
+    
+  char minuteStr[2];
+  memset(minuteStr, '\0', sizeof(minuteStr));
+  if(theMinute < 10) {
+    snprintf(minuteStr, sizeof(minuteStr), "0%d", theMinute);
+  } else {
+    snprintf(minuteStr, sizeof(minuteStr), "%d", theMinute);
+  }
+  
+  char secondStr[2];
+  memset(secondStr, '\0', sizeof(secondStr));
+  if(theSecond < 10) {
+    snprintf(secondStr, sizeof(secondStr), "0%d", theSecond);
+  } else {
+    snprintf(secondStr, sizeof(secondStr), "%d", theSecond);
+  }
+
+  
+  snprintf(dateStrUTC, sizeof(dateStrUTC), "%s %d, %d %s:%s:%s", monthName, theDay, theYear, hourStr, minuteStr, secondStr);
+}
+
+void makeDateString8utc() {
+  memset(dateStr, '\0', sizeof(dateStr));
+
+  char monthName[9];
+  memset(monthName, '\0', sizeof(monthName));
+  switch (theMonth) {
+    case 1:
+      snprintf(monthName, sizeof(monthName), "%s", "January");
+    case 2:
+      snprintf(monthName, sizeof(monthName), "%s", "February");
+    case 3:
+      snprintf(monthName, sizeof(monthName), "%s", "March");
+    case 4:
+      snprintf(monthName, sizeof(monthName), "%s", "April");
+    case 5:
+      snprintf(monthName, sizeof(monthName), "%s", "May");
+    case 6:
+      snprintf(monthName, sizeof(monthName), "%s", "June");
+    case 7:
+      snprintf(monthName, sizeof(monthName), "%s", "July");
+    case 8:
+      snprintf(monthName, sizeof(monthName), "%s", "August");
+    case 9:
+      snprintf(monthName, sizeof(monthName), "%s", "September");
+    case 10:
+      snprintf(monthName, sizeof(monthName), "%s", "October");
+    case 11:
+      snprintf(monthName, sizeof(monthName), "%s", "November");
+    case 12:
+      snprintf(monthName, sizeof(monthName), "%s", "December");
+  }
+
+  unsigned long tmpHour = theHour - 8L;
+  if(tmpHour < 0) tmpHour = tmpHour + 24L;
+  
+  char hourStr[2];
+  memset(hourStr, '\0', sizeof(hourStr));
+  if(tmpHour < 10) {
+    snprintf(hourStr, sizeof(hourStr), "0%d", tmpHour);
+  } else {
+    snprintf(hourStr, sizeof(hourStr), "%d", tmpHour);
+  }
+    
+  char minuteStr[2];
+  memset(minuteStr, '\0', sizeof(minuteStr));
+  if(theMinute < 10) {
+    snprintf(minuteStr, sizeof(minuteStr), "0%d", theMinute);
+  } else {
+    snprintf(minuteStr, sizeof(minuteStr), "%d", theMinute);
+  }
+  
+  char secondStr[2];
+  memset(secondStr, '\0', sizeof(secondStr));
+  if(theSecond < 10) {
+    snprintf(secondStr, sizeof(secondStr), "0%d", theSecond);
+  } else {
+    snprintf(secondStr, sizeof(secondStr), "%d", theSecond);
+  }
+
+  
+  snprintf(dateStr, sizeof(dateStr), "%s %d, %d %s:%s:%s", monthName, theDay, theYear, hourStr, minuteStr, secondStr);
+}
