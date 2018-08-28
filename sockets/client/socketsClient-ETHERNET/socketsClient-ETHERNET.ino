@@ -13,11 +13,19 @@ IPAddress ip(192, 168, 1, 251);
 EthernetServer server(80);
 
 
+const char sensorName = "testEthernet1";
+
+
 double tempC = 0;
 double tempF = 0;
 double relH = 0;
 
 long lastReadingTime = 0;
+
+
+const uint16_t port = 5000;
+const char * host = "192.168.1.40";
+
 
 
 void setup() {
@@ -77,4 +85,50 @@ void loop() {
 
 
   }
+
+  doNetworkStuff();
+
+  delay(99);
 }
+
+
+void doNetworkStuff() {
+  int theBuffSize = 640;
+  int theMiniBuffSize = 64;
+  char buff[theBuffSize];
+  char miniBuff[theMiniBuffSize];
+
+  memset(buff, '\0', sizeof(buff));
+  memset(miniBuff, '\0', sizeof(miniBuff));
+
+  snprintf(miniBuff, sizeof(miniBuff), "%s\r\n", sensorName);
+  strcat(buff, miniBuff);
+  
+  snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", relH);
+  strcat(buff, miniBuff);
+
+  snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", tempC);
+  strcat(buff, miniBuff);
+
+  snprintf(miniBuff, sizeof(miniBuff), "%f\r\n", tempF);
+  strcat(buff, miniBuff);
+
+  EthernetClient client;
+
+  if (!client.connect(host, port)) {
+    Serial.println("connection failed");
+    Serial.println("wait 5 sec...");
+    delay(2500);
+    return;
+  }
+  
+  Serial.print("connected to");
+  Serial.println(client.remoteIP());
+
+  client.println(buff);
+  Serial.println("data sent, closing connection...");
+
+  client.stop();
+  Serial.println("connection closed!!!");
+}
+
