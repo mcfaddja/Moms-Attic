@@ -6,14 +6,14 @@ dht DHT;
 #define DHT11_PIN 2
 
 byte mac[] = {
-  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xEE
 };
-IPAddress ip(192, 168, 1, 250);
+IPAddress ip(192, 168, 1, 251);
 
 EthernetServer server(80);
 
 
-const char sensorName = "testEthernet1";
+const char sensorName = "testEthernet2";
 
 
 double tempC = 0;
