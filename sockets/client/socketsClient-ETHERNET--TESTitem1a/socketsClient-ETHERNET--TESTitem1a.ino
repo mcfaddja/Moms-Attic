@@ -146,31 +146,26 @@ void listenForEthernetClients() {
           client.println("<br />");
           client.println("\t The IP Address of this sensor device is: ");
           client.println("<br />");
-          //          client.println("192.168.1.250");
           client.println(ip);
           client.println("<br />");
           client.println(" ");
           client.println("<br />");
           client.println("\t The MAC Address of this sensor device is: ");
           client.println("<br />");
-          //          client.println("ne  DE:AD:BE:EF:FE:EE");
           char macBuff[4];
           memset(macBuff, '\0', sizeof(macBuff));
           for (int i = 0; i < 5; i++) {
             snprintf(macBuff, sizeof(macBuff), "%x", mac[i]);
-//            client.println(mac[i]);
             client.println(macBuff);
             client.println(":");
           }
           snprintf(macBuff, sizeof(macBuff), "%x", mac[5]);
           client.println(macBuff);
-          //          client.println(mac[6]);
           client.println("<br />");
           client.println(" ");
           client.println("<br />");
           client.println("\t Data is sent to the server at the IP Address: ");
           client.println("<br />");
-          //          client.println("192.168.1.250");
           client.println(host);
           client.println("<br />");
           client.println(" ");
