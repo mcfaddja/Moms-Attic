@@ -39,7 +39,7 @@ class MySensorDataHandler(socketserver.StreamRequestHandler):
             "   `temperatureC` DOUBLE NOT NULL,"
             "   `temperatureF` DOUBLE NOT NULL,"
             "   PRIMARY KEY (`measurementID`),"
-            "   UNIQUE INDEX `measurementID_UNIQUE` (`measurementID` ASC) VISIBLE"
+            "   UNIQUE INDEX (`measurementID`)"
             ") ENGINE=InnoDB".format(tblName)
         )
 
