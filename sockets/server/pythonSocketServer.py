@@ -58,7 +58,7 @@ class MySensorDataHandler(socketserver.StreamRequestHandler):
 
         
         add_datapt = ("INSERT INTO `{}` "
-                      "(date, relative_humidity, temeratureC, temperatureF) "
+                      "(date, relative_humidity, temperatureC, temperatureF) "
                       "VALUES (%(date_time_pt)s, %(relH)s, %(tC)s, %(tF)s)".format(tblName))
 
         aDataPT = {
