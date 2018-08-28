@@ -6,9 +6,9 @@ dht DHT;
 #define DHT11_PIN 2
 
 byte mac[] = {
-  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xEE
+  0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
-IPAddress ip(192, 168, 1, 251);
+IPAddress ip(192, 168, 1, 250);
 
 EthernetServer server(80);
 
