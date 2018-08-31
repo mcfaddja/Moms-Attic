@@ -71,7 +71,13 @@ if ($result2->num_rows > 0) {
 } else {
     echo "0 results";
 }
+echo "<br>";
+echo "<br>";
+echo "<br>";
 
+
+echo "The date today is <b>" . date("Y/m/d") . "</b><br>";
+echo "and the time now is <b>" . date("h:i:sa") . "</b><br>";
 
 $conn->close();
 ?>
