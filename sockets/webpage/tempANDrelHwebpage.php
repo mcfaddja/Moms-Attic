@@ -21,7 +21,7 @@ echo "<br>";
 $sql = "SELECT DISTINCT sensorID from allTestSensors";
 $result = $conn->query($sql);
 
-echo "Possible <b>SensorID<\b> values: <br>";
+echo "Possible <b>SensorID</b> values: <br>";
 if ($result->num_rows > 0) {
     // output data of each row
     while($row = $result->fetch_assoc()) {
