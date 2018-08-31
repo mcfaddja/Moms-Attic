@@ -44,11 +44,11 @@ $result0 = $conn->query($sql0);
 if ($result0->num_rows > 0) {
     // output data of each row
     while($row0 = $result0->fetch_assoc()) {
-        echo "<b>measurementID</b>: " . $row0["measurementID"] . "<br>";
-        echo "<b>date</b> : " . $row0[date] . "<br>";
-        echo "<b>Relative Humidity</b> : " . $row0[relative_humidity] . "<br>";
-        echo "<b>Temperature (C)</b> : " . $row0[temperatureC] . "<br>";
-        echo "<b>Temperature (F)</b> : " . $row0[temperatureF] . "<br>";
+        echo "<\t><b>measurementID</b>: " . $row0["measurementID"] . "<br>";
+        echo "<\t><b>date</b> : " . $row0[date] . "<br>";
+        echo "<\t><b>Relative Humidity</b> : " . $row0[relative_humidity] . "<br>";
+        echo "<\t><b>Temperature (C)</b> : " . $row0[temperatureC] . "<br>";
+        echo "<\t><b>Temperature (F)</b> : " . $row0[temperatureF] . "<br>";
     }
 } else {
     echo "0 results";
