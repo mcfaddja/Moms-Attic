@@ -13,7 +13,7 @@ IPAddress ip(192, 168, 1, 252);
 
 EthernetServer server(80);
 
-const char theSensorName[] = "testEthernet2";
+const char theSensorName[] = "testEthernet0";
 
 const uint16_t port = 5000;
 const char * host = "192.168.1.238";
@@ -54,7 +54,7 @@ void setup() {
 
 void loop() {
   // check for a reading no more than once a second.
-  if (millis() - lastReadingTime > 5001) {
+  if (millis() - lastReadingTime > 10001) {
     Serial.println(ip);
     // if there's a reading ready, read it:
     // don't do anything until the data ready pin is high:
@@ -116,7 +116,6 @@ void loop() {
   }
 
   listenForEthernetClients();
-  //  delay(2000);
 }
 
 
@@ -188,7 +187,7 @@ void listenForEthernetClients() {
           client.println(" ");
           client.println("<br />");
           client.println("Time until next measurement: ");
-          client.println((5000 - (millis() - lastReadingTime)));
+          client.println((10000 - (millis() - lastReadingTime)));
           client.println(" milliseconds");
           client.println("<br />");
           break;
@@ -203,7 +202,7 @@ void listenForEthernetClients() {
       }
     }
     // give the web browser time to receive the data
-    delay(5);
+    delay(9);
     // close the connection:
     client.stop();
   }
